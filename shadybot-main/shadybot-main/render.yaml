@@ -1,0 +1,64 @@
+services:
+
+- type: web
+  name: shadybot-web
+  env: node
+  plan: starter
+  buildCommand: |
+  cd backend && npm install &&   
+  cd ../dashboard && npm install && npm run build &&   
+  cd ../backend
+  startCommand: node backend/index.js
+  healthCheckPath: /health
+  disk:
+  name: shadybot-data
+  mountPath: /var/data
+  sizeGB: 1
+  envVars:
+  - key: NODE_ENV
+    value: production
+  - key: DB_PATH
+    value: /var/data/shadybot.db
+  - key: DISCORD_TOKEN
+    sync: false
+  - key: CLIENT_ID
+    sync: false
+  - key: CLIENT_SECRET
+    sync: false
+  - key: SESSION_SECRET
+    generateValue: true
+  - key: CALLBACK_URL
+    sync: false
+  - key: CORS_ORIGIN
+    value: “*”
+  - key: LOG_LEVEL
+    value: info
+  - key: PORT
+    value: 10000
+    autoDeploy: true
+- type: worker
+  name: shadybot-bot
+  env: node
+  plan: starter
+  buildCommand: cd backend && npm install
+  startCommand: node backend/bot.js
+  envVars:
+  - key: NODE_ENV
+    value: production
+  - key: DB_PATH
+    value: /var/data/shadybot.db
+  - key: DISCORD_TOKEN
+    sync: false
+  - key: CLIENT_ID
+    sync: false
+  - key: API_URL
+    sync: false
+  - key: LOG_LEVEL
+    value: info
+    autoDeploy: true
+
+databases:
+
+- name: shadybot-db
+  databaseName: shadybot
+  user: shadybot
