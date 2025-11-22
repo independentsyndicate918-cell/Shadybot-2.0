@@ -32,5 +32,5 @@
 “last 1 safari version”
 ]
 },
-“proxy”: “http://localhost:10000”
+“proxy”: “https://your-app.onrender.com/auth/discord/callback”
 }
